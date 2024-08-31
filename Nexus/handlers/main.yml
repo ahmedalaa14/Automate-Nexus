@@ -1,0 +1,13 @@
+---
+# handlers file for Nexus
+
+- name: Verify Nexus availability
+  url:
+    url: http://localhost:8081
+    method: GET
+  register: nexus_response  # Register the response in a variable
+  notify: Display Nexus respone
+
+- name: Display Nexus respone
+  debug:
+    var: nexus_response  # Display the response
