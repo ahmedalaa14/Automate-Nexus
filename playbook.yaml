@@ -1,0 +1,4 @@
+- name: Automate Nexus Deployment
+  hosts: aws_ec2
+  roles:
+    - Nexus
