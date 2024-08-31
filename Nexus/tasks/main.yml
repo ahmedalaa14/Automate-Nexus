@@ -1,0 +1,56 @@
+---
+# tasks file for Nexus
+- name: apt-get update
+  apt:
+    update_cache: yes
+
+- name: Install Java
+  apt:
+    name: openjdk-8-jdk
+    state: latest
+    install_recommends: no
+
+- name: Download Nexus
+  get_url:
+    url: https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+    dest: /home/ubuntu # This is the directory where the file will be downloaded
+
+- name: Create nexus directory under opt
+  file:
+      path: "/opt/nexus" 
+      state: directory
+      mode: '0755'   # Adjust the mode as per your requirement
+
+- name: Install unzip package
+  apt:
+    name: unzip
+    state: present
+
+- name: Insatll tar package
+  apt:
+    name: tar
+    state: present
+
+- name: Extract nexus.tgz into "/opt/nexus"
+  unarchive:
+    src: /home/ubuntu/latest-unix.tar.gz
+    dest: /opt/nexus
+    remote_src: yes
+    creates: /opt/nexus/nexus-3.55.1-01  # Specify the expected directory path after extraction
+
+- name: Create User
+  user:
+    name: nexus
+    password: "!" # You can use the password hash here
+
+- name: Set ownership and permissions
+  file:
+      path: "/opt/nexus"
+      owner: nexus
+      group: nexus
+      mode: '0755'
+
+- name: Start Nexus
+  command: /opt/nexus/nexus-3.55.1-01/bin/nexus start
+  notify: Verify Nexus availability
+  
